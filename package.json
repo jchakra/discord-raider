@@ -1,0 +1,25 @@
+{
+  "name": "discord-raider",
+  "version": "0.1.0",
+  "description": "Raider organizer for Discord",
+  "main": "index.js",
+  "scripts": {
+    "lint": "tslint 'src/**/*' && echo OK",
+    "prejs-compile": "rm -rf dist",
+    "js-compile": "tsc",
+    "test": "mocha --compilers ts:ts-node/register --recursive"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.7",
+    "mocha": "^3.4.2",
+    "ts-node": "^3.1.0",
+    "tslint": "^5.4.3",
+    "typescript": "^2.4.1"
+  }
+}
