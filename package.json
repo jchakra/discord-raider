@@ -7,12 +7,16 @@
     "lint": "tslint 'src/**/*' && echo OK",
     "prejs-compile": "rm -rf dist",
     "js-compile": "tsc",
+    "start": "npm run js-compile && node ./dist/index.js",
     "test": "mocha --compilers ts:ts-node/register --recursive"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.1.0"
+    "discord.js": "^11.1.0",
+    "lodash": "^4.17.4",
+    "lowdb": "^0.16.2",
+    "moment": "^2.18.1"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.41",
