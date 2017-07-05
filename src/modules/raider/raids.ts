@@ -38,14 +38,68 @@ export default {
   },
 
   joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const raid = DB.get('raids', {id: raidId});
+
+      if (!raid) {
+        reject(false);
+      }
+
       const isAlreadyRegistered = find(flatten([raid.players, raid.waitings, raid.absents]), e => e.id === playerId);
       if (!isAlreadyRegistered) {
         DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName }).write();
         resolve(true);
       }
       resolve(false);
+    });
+  },
+
+  declineRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const raid = DB.get('raids', {id: raidId});
+
+      if (!raid) {
+        reject(false);
+      }
+
+      const isAlreadyRegistered = find(flatten([raid.players, raid.waitings, raid.absents]), e => e.id === playerId);
+      if (!isAlreadyRegistered) {
+        DB.getRaw('raids', {id: raidId}).get('absents').push({ id: playerId, name: playerName }).write();
+        resolve(true);
+      }
+      resolve(false);
+    });
+  },
+
+  accept(raidId: string, playerName: string, callerId: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const raid = DB.get('raids', {id: raidId});
+      if (!raid) {
+        reject(false);
+      }
+
+      if (raid.organizerId !== callerId) {
+        reject(false);
+      }
+      const character = DB.getRaw('raids', {id: raidId})
+        .get('waitings')
+        .find(e => e.name.toLowerCase() === playerName.toLowerCase())
+        .value();
+
+      if (!character) {
+        reject(false);
+      }
+
+      DB.getRaw('raids', {id: raidId})
+        .get('players')
+        .push(character)
+        .write();
+
+      DB.getRaw('raids', {id: raidId})
+        .get('waitings')
+        .remove(e => e.name.toLowerCase() === playerName.toLowerCase())
+        .write();
+      resolve(character.id);
     });
   },
 };

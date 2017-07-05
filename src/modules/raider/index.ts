@@ -33,6 +33,14 @@ export const Raider: Module = {
         return Raids.joinRaid(messageContent.args[0], message.author.id, message.author.username).then(result => {
           return { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel };
         });
+      case 'decline':
+        return Raids.declineRaid(messageContent.args[0], message.author.id, message.author.username).then(result => {
+          return { content: (result) ? 'Your status is registered!' : 'You are already registered on this raid!', recipient: message.channel };
+        });
+      case 'accept':
+        return Raids.accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => {
+          return { content: 'ok', recipient: message.channel };
+        });
       default:
         return new Promise( resolve => resolve({ content: 'Unknown command ', recipient: message.channel}));
     }
