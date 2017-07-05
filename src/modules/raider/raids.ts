@@ -1,5 +1,6 @@
 import DB from '../../db';
 import * as moment from 'moment';
+import { find, flatten } from 'lodash';
 import { Character } from './characters';
 
 export interface Raid {
@@ -34,5 +35,17 @@ export default {
 
   getRaids(): Promise<Array<Raid>> {
     return new Promise(resolve => resolve(_getAllFutureRaids()));
-  }
+  },
+
+  joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
+    return new Promise(resolve => {
+      const raid = DB.get('raids', {id: raidId});
+      const isAlreadyRegistered = find(flatten([raid.players, raid.waitings, raid.absents]), e => e.id === playerId);
+      if (!isAlreadyRegistered) {
+        DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName }).write();
+        resolve(true);
+      }
+      resolve(false);
+    });
+  },
 };

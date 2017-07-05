@@ -29,6 +29,10 @@ export const Raider: Module = {
           const raidsFormatted = (raids.length > 0) ? raids.map(formatRaidToDisplay).join('\n') : 'No scheduled raids';
           return { content: raidsFormatted, recipient: message.channel };
         });
+      case 'join':
+        return Raids.joinRaid(messageContent.args[0], message.author.id, message.author.username).then(result => {
+          return { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel };
+        });
       default:
         return new Promise( resolve => resolve({ content: 'Unknown command ', recipient: message.channel}));
     }

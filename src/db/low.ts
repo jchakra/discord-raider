@@ -11,6 +11,9 @@ const db: Database = {
   push(collection, item) {
     return DB.get(collection).push(item).write();
   },
+  update(collection, search, data) {
+    db.get(collection).find(search).assign(data).write();
+  },
   get(collection, search) {
     if (search) {
       return DB.get(collection).find(search).value();
