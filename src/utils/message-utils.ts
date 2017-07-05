@@ -8,7 +8,7 @@ export interface ParsedMessage {
 
 export const isHumanMessage = (message: Message, client: Client) => message.author.id !== client.user.id;
 
-export const parseMessage = (message:Message): ParsedMessage => {
+export const parseMessage = (message: Message): ParsedMessage => {
   const splitted = message.content.split(' ');
   return {
     mainCommand: splitted[0],
