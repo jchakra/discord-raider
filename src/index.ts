@@ -1,4 +1,5 @@
 import { Client, Message } from 'discord.js';
+import { createServer } from 'http';
 
 import { isHumanMessage } from './utils/message-utils';
 import Dispatcher from './dispatcher';
@@ -29,3 +30,14 @@ client.on('message', (message: Message) => {
 });
 
 client.login(config.auth.token);
+
+// Simple Http server to check the client state
+const requestHandler = (_, response) => {
+  response.end(`Client status: ${client.status}`);
+};
+
+const server = createServer(requestHandler);
+
+server.listen(process.env.PORT || 5000, () => {
+  console.log(`server is listening on ${process.env.PORT || 5000}`);
+});
