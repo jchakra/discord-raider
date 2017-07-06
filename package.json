@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "tslint 'src/**/*' && echo OK",
-    "prejs-compile": "rm -rf dist",
+    "prejs-compile": "rm -rf dist && mkdir -p data && touch data/db.json > /dev/null",
     "js-compile": "tsc",
     "start": "npm run js-compile && node ./dist/index.js",
     "test": "mocha --compilers ts:ts-node/register --recursive"
