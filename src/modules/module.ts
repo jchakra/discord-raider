@@ -1,4 +1,4 @@
-import { Message, DMChannel, TextChannel, GroupDMChannel } from 'discord.js';
+import { Message, DMChannel, TextChannel, GroupDMChannel, User } from 'discord.js';
 
 export interface Module {
   name: string;
@@ -8,5 +8,5 @@ export interface Module {
 
 export interface ModuleResponse {
   content: string;
-  recipient: DMChannel | TextChannel | GroupDMChannel;
+  recipient: DMChannel | TextChannel | GroupDMChannel | User;
 }

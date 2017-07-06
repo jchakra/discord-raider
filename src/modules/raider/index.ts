@@ -1,7 +1,7 @@
 import { Module } from '../module';
 import DB from '../../db';
 import { parseMessage } from '../../utils/message-utils';
-import { formatRaidToDisplay } from './raids-utils';
+import { formatRaidToDisplay, generateHelp } from './raids-utils';
 
 import Raids from './raids';
 
@@ -43,6 +43,8 @@ export const Raider: Module = {
         return Raids.accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
           { content: 'ok', recipient: message.channel }
         ));
+      case 'help':
+        return generateHelp().then( helpString => ({ content: helpString, recipient: message.channel }));
       default:
         return new Promise( resolve => resolve({ content: 'Unknown command ', recipient: message.channel}));
     }
