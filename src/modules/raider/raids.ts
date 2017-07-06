@@ -26,7 +26,7 @@ function _getAllFutureRaids(): Array<Raid> {
 export default {
   createRaid(name: string, date: string, description: string, organizerId: string, organizer: string): Promise<Raid> {
     return new Promise(resolve => {
-      const id = `${name}-${moment().unix()}`;
+      const id = `${name.replace(' ', '_')}-${moment().unix()}`;
       const raidData = {id, name, date: moment(date).toDate(), description, organizerId, organizer, players: [], waitings: [], absents: [] };
       _addNewRaid(raidData);
       resolve(raidData);

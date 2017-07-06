@@ -23,7 +23,7 @@ export const Raider: Module = {
           messageContent.args[2],
           message.author.id,
           message.author.username
-        ).then(raid => ( { content: `Raid \`${raid.name}\' created!`, recipient: message.channel } ));
+        ).then(raid => ( { content: `Raid \`${raid.name}\' created! (ID ${raid.id})`, recipient: message.channel } ));
       case 'list':
         return Raids.getRaids().then(raids => {
           const raidsFormatted = (raids.length > 0) ? raids.map(formatRaidToDisplay).join('\n') : 'No scheduled raids';
