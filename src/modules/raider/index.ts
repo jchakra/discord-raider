@@ -24,23 +24,25 @@ export const Raider: Module = {
           message.author.id,
           message.author.username
         ).then(raid => ( { content: `Raid \`${raid.name}\' created! (ID ${raid.id})`, recipient: message.channel } ));
+      case 'remove':
+        return Raids.deleteRaid(messageContent.args[0], message.author.id).then(result => ({ content: 'Raid deleted!', recipient: message.channel }));
       case 'list':
         return Raids.getRaids().then(raids => {
           const raidsFormatted = (raids.length > 0) ? raids.map(formatRaidToDisplay).join('\n') : 'No scheduled raids';
           return { content: raidsFormatted, recipient: message.channel };
         });
       case 'join':
-        return Raids.joinRaid(messageContent.args[0], message.author.id, message.author.username).then(result => {
-          return { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel };
-        });
+        return Raids.joinRaid(messageContent.args[0], message.author.id, message.author.username).then(result => (
+          { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel }
+        ));
       case 'decline':
-        return Raids.declineRaid(messageContent.args[0], message.author.id, message.author.username).then(result => {
-          return { content: (result) ? 'Your status is registered!' : 'You are already registered on this raid!', recipient: message.channel };
-        });
+        return Raids.declineRaid(messageContent.args[0], message.author.id, message.author.username).then(result => (
+          { content: (result) ? 'Your status is registered!' : 'You are already registered on this raid!', recipient: message.channel }
+        ));
       case 'accept':
-        return Raids.accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => {
-          return { content: 'ok', recipient: message.channel };
-        });
+        return Raids.accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
+          { content: 'ok', recipient: message.channel }
+        ));
       default:
         return new Promise( resolve => resolve({ content: 'Unknown command ', recipient: message.channel}));
     }

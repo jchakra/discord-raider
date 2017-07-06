@@ -33,6 +33,23 @@ export default {
     });
   },
 
+  deleteRaid(raidId: string, callerId: string): Promise<boolean> {
+    return new Promise( (resolve, reject) => {
+      const raid = DB.get('raids', {id: raidId});
+
+      if (!raid) {
+        reject(false);
+      }
+
+      if (raid.organizerId !== callerId) {
+        reject(false);
+      }
+
+      DB.remove('raids', {id: raidId});
+      resolve(true);
+    });
+  },
+
   getRaids(): Promise<Array<Raid>> {
     return new Promise(resolve => resolve(_getAllFutureRaids()));
   },

@@ -12,7 +12,10 @@ const db: Database = {
     return DB.get(collection).push(item).write();
   },
   update(collection, search, data) {
-    db.get(collection).find(search).assign(data).write();
+    return DB.get(collection).find(search).assign(data).write();
+  },
+  remove(collection, search) {
+    return DB.get(collection).remove(search).write();
   },
   get(collection, search) {
     if (search) {
