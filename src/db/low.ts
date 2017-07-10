@@ -32,6 +32,14 @@ const db: Database = {
     else {
       return DB.get(collection);
     }
+  },
+  getAll(collection, search) {
+    if (search) {
+      return DB.get(collection).filter(search).value();
+    }
+    else {
+      return DB.get(collection).value();
+    }
   }
 };
 

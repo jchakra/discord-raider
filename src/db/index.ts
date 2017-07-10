@@ -6,6 +6,7 @@ export interface Database {
   update(collection: string, search: object, data: object): any;
   remove(collection: string, search: object): any;
   get(collection: string, search?: object): any;
+  getAll(collection: string, search?: object): any;
   getRaw(collection: string, search?: object): any;
 }
 

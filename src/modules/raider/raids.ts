@@ -19,8 +19,10 @@ function _addNewRaid(raidData: Raid): Promise<Raid> {
   return DB.push('raids', raidData);
 }
 
-function _getAllFutureRaids(): Array<Raid> {
-  return DB.get('raids');
+function _getFutureRaids(): Array<Raid> {
+  return DB.getAll('raids', e =>
+    moment(e.date).startOf('day').isAfter(moment()) &&
+    moment(e.date).isBefore(moment().add(14, 'days').endOf('day')));
 }
 
 export default {
@@ -51,7 +53,7 @@ export default {
   },
 
   getRaids(): Promise<Array<Raid>> {
-    return new Promise(resolve => resolve(_getAllFutureRaids()));
+    return new Promise(resolve => resolve(_getFutureRaids()));
   },
 
   joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
