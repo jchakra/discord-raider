@@ -1,7 +1,7 @@
 {
   "name": "discord-raider",
   "version": "0.1.0",
-  "description": "Raider organizer for Discord",
+  "description": "Raider scheduler for Discord",
   "main": "index.js",
   "scripts": {
     "lint": "tslint 'src/**/*' && echo OK",
@@ -25,5 +25,14 @@
     "ts-node": "^3.1.0",
     "tslint": "^5.4.3",
     "typescript": "^2.4.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jchakra/discord-raider.git"
+  },
+  "keywords": ["discord", "raider"],
+  "bugs": {
+    "url": "https://github.com/jchakra/discord-raider/issues"
+  },
+  "homepage": "https://github.com/jchakra/discord-raider"
 }
