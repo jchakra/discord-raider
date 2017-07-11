@@ -25,6 +25,12 @@ function _getFutureRaids(): Array<Raid> {
     moment(e.date).isBefore(moment().add(14, 'days').endOf('day')));
 }
 
+function _getPastRaids(): Array<Raid> {
+  return DB.getAll('raids', e =>
+    moment(e.date).endOf('day').isBefore(moment()) &&
+    moment(e.date).isAfter(moment().subtract(14, 'days').startOf('day')));
+}
+
 export default {
   createRaid(name: string, date: string, description: string, organizerId: string, organizer: string): Promise<Raid> {
     return new Promise(resolve => {
@@ -52,8 +58,23 @@ export default {
     });
   },
 
-  getRaids(): Promise<Array<Raid>> {
-    return new Promise(resolve => resolve(_getFutureRaids()));
+  getRaids(options: string[]): Promise<Array<Raid>> {
+    let raids;
+    switch (options[0]) {
+      case '--past':
+        raids = _getPastRaids();
+        break;
+      case '--date':
+        raids = flatten([ DB.get('raids', e =>
+          moment(e.date).startOf('day')
+            .isSame(moment(options[1]).startOf('day')))
+        ]);
+        break;
+      default:
+        raids = _getFutureRaids();
+        break;
+    }
+    return new Promise(resolve => resolve(raids));
   },
 
   joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {

@@ -27,7 +27,7 @@ export const Raider: Module = {
       case 'remove':
         return Raids.deleteRaid(messageContent.args[0], message.author.id).then(result => ({ content: 'Raid deleted!', recipient: message.channel }));
       case 'list':
-        return Raids.getRaids().then(raids => {
+        return Raids.getRaids(messageContent.args).then(raids => {
           const raidsFormatted = (raids.length > 0) ? raids.map(formatRaidToDisplay).join('\n') : 'No scheduled raids';
           return { content: raidsFormatted, recipient: message.channel };
         });
