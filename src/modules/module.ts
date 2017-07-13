@@ -7,6 +7,6 @@ export interface Module {
 }
 
 export interface ModuleResponse {
-  content: string;
+  content: string | Array<string>;
   recipient: DMChannel | TextChannel | GroupDMChannel | User;
 }

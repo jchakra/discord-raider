@@ -2,6 +2,7 @@ import { Module } from '../module';
 import DB from '../../db';
 import { parseMessage } from '../../utils/message-utils';
 import { formatRaidToDisplay, generateHelp, formatCallPlayers } from './raids-utils';
+import { flatten } from 'lodash';
 
 import Raids from './raids';
 
@@ -28,7 +29,7 @@ export const Raider: Module = {
         return Raids.deleteRaid(messageContent.args[0], message.author.id).then(result => ({ content: 'Raid deleted!', recipient: message.channel }));
       case 'list':
         return Raids.getRaids(messageContent.args).then(raids => {
-          const raidsFormatted = (raids.length > 0) ? raids.map(formatRaidToDisplay).join('\n') : 'No scheduled raids';
+          const raidsFormatted = (raids.length > 0) ? flatten(raids.map(formatRaidToDisplay)) : 'No scheduled raids';
           return { content: raidsFormatted, recipient: message.channel };
         });
       case 'join':

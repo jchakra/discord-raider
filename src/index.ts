@@ -23,7 +23,14 @@ client.on('message', (message: Message) => {
     const responses = dispatcher.dispatchMessage(message);
     Promise.all(responses).then(responses => {
       responses.forEach(r => {
-        r.recipient.send(r.content);
+        if (r.content instanceof Array) {
+          r.content.forEach(c => {
+            r.recipient.send(c);
+          });
+        }
+        else {
+          r.recipient.send(r.content);
+        }
       });
     });
   }
