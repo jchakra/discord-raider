@@ -42,3 +42,7 @@ Accept a participant for an event:
 
 \`\`\``
 ));
+
+export const formatCallPlayers = (players: Array<string>): string => (
+  players.map(p => `@${p}`).join(', ') + ' ! You are expected for the next raid!'
+);

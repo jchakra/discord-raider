@@ -22,7 +22,8 @@ function _addNewRaid(raidData: Raid): Promise<Raid> {
 function _getFutureRaids(): Array<Raid> {
   return DB.getAll('raids', e =>
     moment(e.date).startOf('day').isAfter(moment()) &&
-    moment(e.date).isBefore(moment().add(14, 'days').endOf('day')));
+    moment(e.date).isBefore(moment().add(14, 'days').endOf('day')))
+    .sort((a, b) => (moment(a.date).isBefore(moment(b.date))) ? -1 : 1);
 }
 
 function _getPastRaids(): Array<Raid> {
@@ -62,7 +63,7 @@ export default {
     let raids;
     switch (options[0]) {
       case '--past':
-        raids = _getPastRaids();
+        raids = flatten([_getPastRaids()]);
         break;
       case '--date':
         raids = flatten([ DB.get('raids', e =>
@@ -71,13 +72,13 @@ export default {
         ]);
         break;
       default:
-        raids = _getFutureRaids();
+        raids = flatten([_getFutureRaids()]);
         break;
     }
     return new Promise(resolve => resolve(raids));
   },
 
-  joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
+  joinRaid(raidId: string, playerId: string, playerName: string, playerTag: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const raid = DB.get('raids', {id: raidId});
 
@@ -87,7 +88,7 @@ export default {
 
       const isAlreadyRegistered = find(flatten([raid.players, raid.waitings, raid.absents]), e => e.id === playerId);
       if (!isAlreadyRegistered) {
-        DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName }).write();
+        DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName, tag: playerTag }).write();
         resolve(true);
       }
       resolve(false);
@@ -142,4 +143,11 @@ export default {
       resolve(character.id);
     });
   },
+
+  call(): Promise<Array<string>> {
+    return new Promise( (resolve, reject) => {
+      const players = _getFutureRaids()[0].players.map(p => p.tag);
+      resolve(players);
+    });
+  }
 };

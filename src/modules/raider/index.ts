@@ -1,7 +1,7 @@
 import { Module } from '../module';
 import DB from '../../db';
 import { parseMessage } from '../../utils/message-utils';
-import { formatRaidToDisplay, generateHelp } from './raids-utils';
+import { formatRaidToDisplay, generateHelp, formatCallPlayers } from './raids-utils';
 
 import Raids from './raids';
 
@@ -32,7 +32,7 @@ export const Raider: Module = {
           return { content: raidsFormatted, recipient: message.channel };
         });
       case 'join':
-        return Raids.joinRaid(messageContent.args[0], message.author.id, message.author.username).then(result => (
+        return Raids.joinRaid(messageContent.args[0], message.author.id, message.author.username, message.author.tag).then(result => (
           { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel }
         ));
       case 'decline':
@@ -42,6 +42,10 @@ export const Raider: Module = {
       case 'accept':
         return Raids.accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
           { content: 'ok', recipient: message.channel }
+        ));
+      case 'call':
+        return Raids.call().then( players => (
+          { content: formatCallPlayers(players), recipient: message.channel }
         ));
       case 'help':
         return generateHelp().then( helpString => ({ content: helpString, recipient: message.channel }));
