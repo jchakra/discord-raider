@@ -12,6 +12,7 @@ Description: ${raid.description};
 Participants: ${(raid.players.length > 0) ? raid.players.map(p => p.name).join(', ') : '-'}
 Waitings: ${(raid.waitings.length > 0) ? raid.waitings.map(p => p.name).join(',') : '-'}
 Absents: ${(raid.absents.length > 0) ? raid.absents.map(p => p.name).join(',') : '-'}
+Refused: ${(raid.refused.length > 0) ? raid.refused.map(p => p.name).join(',') : '-'}
 \`\`\``,
 `\`${raid.id}\``
 ]

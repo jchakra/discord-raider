@@ -13,6 +13,7 @@ export interface Raid {
   players: Array<Character>;
   waitings: Array<Character>;
   absents: Array<Character>;
+  refused: Array<Character>;
 }
 
 function _addNewRaid(raidData: Raid): Promise<Raid> {
@@ -36,7 +37,7 @@ export default {
   createRaid(name: string, date: string, description: string, organizerId: string, organizer: string): Promise<Raid> {
     return new Promise(resolve => {
       const id = `${name.replace(' ', '_')}-${moment().unix()}`;
-      const raidData = {id, name, date: moment(date).toDate(), description, organizerId, organizer, players: [], waitings: [], absents: [] };
+      const raidData = {id, name, date: moment(date).toDate(), description, organizerId, organizer, players: [], waitings: [], absents: [], refused: [] };
       _addNewRaid(raidData);
       resolve(raidData);
     });
@@ -140,6 +141,52 @@ export default {
         .get('waitings')
         .remove(e => e.name.toLowerCase() === playerName.toLowerCase())
         .write();
+      resolve(character.id);
+    });
+  },
+
+  refuse(raidId: string, playerName: string, callerId: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const raid = DB.get('raids', {id: raidId});
+      if (!raid) {
+        reject(false);
+      }
+
+      if (raid.organizerId !== callerId) {
+        reject(false);
+      }
+      let character = DB.getRaw('raids', {id: raidId})
+        .get('waitings')
+        .find(e => e.name.toLowerCase() === playerName.toLowerCase())
+        .value();
+
+      DB.getRaw('raids', {id: raidId})
+        .get('waitings')
+        .remove(e => e.name.toLowerCase() === playerName.toLowerCase())
+        .write();
+
+      if (!character) {
+        character = DB.getRaw('raids', {id: raidId})
+          .get('players')
+          .find(e => e.name.toLowerCase() === playerName.toLowerCase())
+          .value();
+
+
+        DB.getRaw('raids', {id: raidId})
+          .get('players')
+          .remove(e => e.name.toLowerCase() === playerName.toLowerCase())
+          .write();
+
+        if (!character) {
+          reject(false);
+        }
+      }
+
+      DB.getRaw('raids', {id: raidId})
+        .get('refused')
+        .push(character)
+        .write();
+
       resolve(character.id);
     });
   },

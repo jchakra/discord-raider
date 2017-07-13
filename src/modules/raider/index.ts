@@ -44,6 +44,10 @@ export const Raider: Module = {
         return Raids.accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
           { content: 'ok', recipient: message.channel }
         ));
+      case 'refuse':
+        return Raids.refuse(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
+          { content: 'ok', recipient: message.channel }
+        ));
       case 'call':
         return Raids.call().then( players => (
           { content: formatCallPlayers(players), recipient: message.channel }
