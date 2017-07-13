@@ -21,7 +21,7 @@ function _addNewRaid(raidData: Raid): Promise<Raid> {
 
 function _getFutureRaids(): Array<Raid> {
   return DB.getAll('raids', e =>
-    moment(e.date).startOf('day').isAfter(moment()) &&
+    moment(e.date).endOf('day').isAfter(moment()) &&
     moment(e.date).isBefore(moment().add(14, 'days').endOf('day')))
     .sort((a, b) => (moment(a.date).isBefore(moment(b.date))) ? -1 : 1);
 }
