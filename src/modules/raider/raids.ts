@@ -86,7 +86,7 @@ export default {
         reject(false);
       }
 
-      const isAlreadyRegistered = find(flatten([raid.players, raid.waitings, raid.absents]), e => e.id === playerId);
+      const isAlreadyRegistered = find(flatten([raid.players, raid.waitings]), e => e.id === playerId);
       if (!isAlreadyRegistered) {
         DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName, tag: playerTag }).write();
         resolve(true);
@@ -103,7 +103,7 @@ export default {
         reject(false);
       }
 
-      const isAlreadyRegistered = find(flatten([raid.players, raid.waitings, raid.absents]), e => e.id === playerId);
+      const isAlreadyRegistered = find(flatten([raid.absents]), e => e.id === playerId);
       if (!isAlreadyRegistered) {
         DB.getRaw('raids', {id: raidId}).get('absents').push({ id: playerId, name: playerName }).write();
         resolve(true);
