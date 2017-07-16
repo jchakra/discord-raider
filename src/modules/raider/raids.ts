@@ -192,7 +192,7 @@ export function refuse(raidId: string, playerName: string, callerId: string): Pr
 
 export function call(): Promise<Array<string>> {
   return new Promise( (resolve, reject) => {
-    const players = _getFutureRaids()[0].players.map(p => p.tag);
+    const players = _getFutureRaids()[0].players.map(p => p.id);
     resolve(players);
   });
 }
