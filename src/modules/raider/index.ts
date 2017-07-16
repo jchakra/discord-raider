@@ -1,7 +1,7 @@
 import { Module } from '../module';
 import DB from '../../db';
 import { parseMessage } from '../../utils/message-utils';
-import { formatRaidToDisplay, generateHelp, formatCallPlayers } from './raids-utils';
+import { formatRaidToDisplay, generateHelp, formatCallPlayers, formatSummaryPlayers } from './raids-utils';
 import { flatten } from 'lodash';
 
 import {
@@ -15,7 +15,7 @@ import {
   call,
 } from './raids';
 
-DB.defaults({ raids: [], characters: [] });
+DB.defaults({ raids: [], characters: [], roles: [] });
 
 export const Raider: Module = {
   name: 'raider',
@@ -60,6 +60,10 @@ export const Raider: Module = {
       case 'call':
         return call().then( players => (
           { content: formatCallPlayers(players), recipient: message.channel }
+        ));
+      case 'summary':
+        return Raids.summary().then( players => (
+          { content: formatSummaryPlayers(players), recipient: message.channel }
         ));
       case 'help':
         return generateHelp().then( helpString => ({ content: helpString, recipient: message.channel }));

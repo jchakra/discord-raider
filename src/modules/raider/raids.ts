@@ -196,3 +196,10 @@ export function call(): Promise<Array<string>> {
     resolve(players);
   });
 }
+
+export function summary(): Promise<Array<Character>> {
+  return new Promise( (resolve, reject) => {
+    const players = _getFutureRaids()[0].players;
+    resolve(players);
+  });
+}

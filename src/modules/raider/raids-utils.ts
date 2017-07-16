@@ -1,6 +1,7 @@
 import * as moment from 'moment';
 
 import { Raid } from './raids';
+import { Character } from './characters';
 
 export const formatRaidToDisplay = (raid: Raid): Array<string> => (
 [
@@ -49,4 +50,8 @@ Accept a participant for an event:
 
 export const formatCallPlayers = (players: Array<string>): string => (
   players.map(p => `<@${p}>`).join(', ') + '! You are expected for the next raid!'
+);
+
+export const formatSummaryPlayers = (players: Array<Character>): string => (
+  players.map(p => `${p.role}  ${p.name}`).join('\n')
 );
