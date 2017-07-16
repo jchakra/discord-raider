@@ -13,6 +13,7 @@ import {
   declineRaid,
   refuse,
   call,
+  summary,
 } from './raids';
 
 DB.defaults({ raids: [], characters: [], roles: [] });
@@ -62,7 +63,7 @@ export const Raider: Module = {
           { content: formatCallPlayers(players), recipient: message.channel }
         ));
       case 'summary':
-        return Raids.summary().then( players => (
+        return summary().then( players => (
           { content: formatSummaryPlayers(players), recipient: message.channel }
         ));
       case 'help':
