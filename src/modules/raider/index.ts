@@ -4,7 +4,16 @@ import { parseMessage } from '../../utils/message-utils';
 import { formatRaidToDisplay, generateHelp, formatCallPlayers } from './raids-utils';
 import { flatten } from 'lodash';
 
-import Raids from './raids';
+import {
+  createRaid,
+  deleteRaid,
+  getRaids,
+  joinRaid,
+  accept,
+  declineRaid,
+  refuse,
+  call,
+} from './raids';
 
 DB.defaults({ raids: [], characters: [] });
 
@@ -18,7 +27,7 @@ export const Raider: Module = {
     const messageContent = parseMessage(message) ;
     switch (messageContent.auxCommand) {
       case 'add':
-        return Raids.createRaid(
+        return createRaid(
           messageContent.args[0],
           messageContent.args[1],
           messageContent.args[2],
@@ -26,30 +35,30 @@ export const Raider: Module = {
           message.author.username
         ).then(raid => ( { content: `Raid \`${raid.name}\' created! (ID ${raid.id})`, recipient: message.channel } ));
       case 'remove':
-        return Raids.deleteRaid(messageContent.args[0], message.author.id).then(result => ({ content: 'Raid deleted!', recipient: message.channel }));
+        return deleteRaid(messageContent.args[0], message.author.id).then(result => ({ content: 'Raid deleted!', recipient: message.channel }));
       case 'list':
-        return Raids.getRaids(messageContent.args).then(raids => {
+        return getRaids(messageContent.args).then(raids => {
           const raidsFormatted = (raids.length > 0) ? flatten(raids.map(formatRaidToDisplay)) : 'No scheduled raids';
           return { content: raidsFormatted, recipient: message.channel };
         });
       case 'join':
-        return Raids.joinRaid(messageContent.args[0], message.author.id, message.author.username, message.author.tag).then(result => (
+        return joinRaid(messageContent.args[0], message.author.id, message.author.username, message.author.tag).then(result => (
           { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel }
         ));
       case 'decline':
-        return Raids.declineRaid(messageContent.args[0], message.author.id, message.author.username).then(result => (
+        return declineRaid(messageContent.args[0], message.author.id, message.author.username).then(result => (
           { content: (result) ? 'Your status is registered!' : 'You are already registered on this raid!', recipient: message.channel }
         ));
       case 'accept':
-        return Raids.accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
+        return accept(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
           { content: 'ok', recipient: message.channel }
         ));
       case 'refuse':
-        return Raids.refuse(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
+        return refuse(messageContent.args[0], messageContent.args[1], message.author.id).then( _ => (
           { content: 'ok', recipient: message.channel }
         ));
       case 'call':
-        return Raids.call().then( players => (
+        return call().then( players => (
           { content: formatCallPlayers(players), recipient: message.channel }
         ));
       case 'help':
