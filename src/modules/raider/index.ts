@@ -16,6 +16,10 @@ import {
   summary,
 } from './raids';
 
+import {
+  defineRole,
+} from './roles';
+
 DB.defaults({ raids: [], characters: [], roles: [] });
 
 export const Raider: Module = {
@@ -65,6 +69,10 @@ export const Raider: Module = {
       case 'summary':
         return summary().then( players => (
           { content: formatSummaryPlayers(players), recipient: message.channel }
+        ));
+      case 'rdefine':
+        return defineRole(messageContent.args[0], messageContent.args[1], messageContent.args[2]).then( role => (
+          { content: `Role ${role.name} created!`, recipient: message.channel }
         ));
       case 'help':
         return generateHelp().then( helpString => ({ content: helpString, recipient: message.channel }));

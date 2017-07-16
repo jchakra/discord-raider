@@ -12,6 +12,8 @@ function createRole(role: Role): Promise<Role> {
 
 export function defineRole(name: string, category: string, icon: string): Promise<Role> {
   return new Promise( (resolve, reject) => {
-    return DB.push('roles', { name, category, icon });
+    const roleData = { name, category, icon };
+    DB.push('roles', roleData);
+    resolve(roleData);
   });
 }
