@@ -83,6 +83,9 @@ export const Raider: Module = {
       case 'set':
         return setCharacter(message.author.id, message.author.username, messageContent.args[0]).then( character => (
           { content: `${character.name} registered as a raider!`, recipient: message.channel }
+        ))
+        .catch( _ => (
+          { content: `Already registered!`, recipient: message.channel }
         ));
       case 'help':
         return generateHelp().then( helpString => ({ content: helpString, recipient: message.channel }));

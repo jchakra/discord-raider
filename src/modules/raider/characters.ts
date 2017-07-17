@@ -9,6 +9,11 @@ export interface Character {
 export function setCharacter(id: string, name: string, role: string): Promise<Character> {
   return new Promise( (resolve, reject) => {
     const characterData = { id, name, role };
+    const existing = DB.get('characters', { id });
+    if (existing) {
+      reject(false);
+      return;
+    }
     DB.push('characters', characterData);
     resolve(characterData);
   });
