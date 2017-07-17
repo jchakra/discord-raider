@@ -17,3 +17,9 @@ export function defineRole(name: string, category: string, icon: string): Promis
     resolve(roleData);
   });
 }
+
+export function getAllRoles(): Promise<Array<Role>> {
+  return new Promise( (resolve, reject) => {
+    resolve(DB.get('roles'));
+  });
+}

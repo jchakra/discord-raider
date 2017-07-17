@@ -78,7 +78,7 @@ export function getRaids(options: string[]): Promise<Array<Raid>> {
   return new Promise(resolve => resolve(raids));
 }
 
-export function joinRaid(raidId: string, playerId: string, playerName: string, playerTag: string): Promise<boolean> {
+export function joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const raid = DB.get('raids', {id: raidId});
 
@@ -88,7 +88,7 @@ export function joinRaid(raidId: string, playerId: string, playerName: string, p
 
     const isAlreadyRegistered = find(flatten([raid.players, raid.waitings]), e => e.id === playerId);
     if (!isAlreadyRegistered) {
-      DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName, tag: playerTag }).write();
+      DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName }).write();
       resolve(true);
     }
     resolve(false);
@@ -199,7 +199,8 @@ export function call(): Promise<Array<string>> {
 
 export function summary(): Promise<Array<Character>> {
   return new Promise( (resolve, reject) => {
-    const players = _getFutureRaids()[0].players;
-    resolve(players);
+    const playersId = _getFutureRaids()[0].players.map(p => p.id);
+    const characters = DB.getAll('characters', c => playersId.includes(c.id));
+    resolve(characters);
   });
 }

@@ -18,7 +18,12 @@ import {
 
 import {
   defineRole,
+  getAllRoles,
 } from './roles';
+
+import {
+  setCharacter,
+} from './characters';
 
 DB.defaults({ raids: [], characters: [], roles: [] });
 
@@ -47,7 +52,7 @@ export const Raider: Module = {
           return { content: raidsFormatted, recipient: message.channel };
         });
       case 'join':
-        return joinRaid(messageContent.args[0], message.author.id, message.author.username, message.author.tag).then(result => (
+        return joinRaid(messageContent.args[0], message.author.id, message.author.username).then(result => (
           { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel }
         ));
       case 'decline':
@@ -67,12 +72,17 @@ export const Raider: Module = {
           { content: formatCallPlayers(players), recipient: message.channel }
         ));
       case 'summary':
-        return summary().then( players => (
-          { content: formatSummaryPlayers(players), recipient: message.channel }
+        return Promise.all([summary(), getAllRoles()]).then( ([characters, roles]) => (
+          { content: formatSummaryPlayers(characters, roles), recipient: message.channel }
         ));
       case 'rdefine':
         return defineRole(messageContent.args[0], messageContent.args[1], messageContent.args[2]).then( role => (
           { content: `Role ${role.name} created!`, recipient: message.channel }
+        ));
+
+      case 'set':
+        return setCharacter(message.author.id, message.author.username, messageContent.args[0]).then( character => (
+          { content: `${character.name} registered as a raider!`, recipient: message.channel }
         ));
       case 'help':
         return generateHelp().then( helpString => ({ content: helpString, recipient: message.channel }));

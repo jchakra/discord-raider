@@ -1,6 +1,15 @@
+import DB from '../../db';
+
 export interface Character {
   id: string;
   name: string;
-  tag: string;
   role?: string;
+}
+
+export function setCharacter(id: string, name: string, role: string): Promise<Character> {
+  return new Promise( (resolve, reject) => {
+    const characterData = { id, name, role };
+    DB.push('characters', characterData);
+    resolve(characterData);
+  });
 }
