@@ -46,7 +46,7 @@ Commands
 ## Raid related commands
 
 ### Event administration
-```md
+```docker
 # Create a new event
 !raider add <event_name> <event_date> <event_description>
 
@@ -55,13 +55,13 @@ Commands
 ```
 
 ### Event list
-```md
+```docker
 # List all events
 !raider list
 ```
 
 ### Event participation
-```md
+```docker
 # Join an event
 !raider join <event_id>
 
@@ -70,7 +70,7 @@ Commands
 ```
 
 ### Organizer commands
-```md
+```docker
 # Accept a participant to the event
 !raider accept <event_id> <player_name>
 
@@ -79,7 +79,7 @@ Commands
 ```
 
 ### Extras
-```md
+```docker
 # Call (mention) all players for the next event
 !raider call
 
@@ -90,7 +90,7 @@ Commands
 ## Character related command
 
 ### Character definition
-```md
+```docker
 # Set a role to the discord user
 !raider set <role_name>
 ```
@@ -98,14 +98,14 @@ Commands
 ## Role related command
 
 ### Role administration
-```md
+```docker
 # Define a new role with a name, a category and an icon
 !raider rdefine <role_name> <role_category> <role_icon>
 ```
 
 > The icon used can be an emoji. Just use the emoji synthax in the command.
 
-```md
+```docker
 !raider rdefine Priest Healer :sun_with_face:  
 ```
 
