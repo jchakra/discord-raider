@@ -46,6 +46,20 @@ Decline an event:
 Accept a participant for an event:
     accept <event_id> <participant_name>
 
+Refuse a participant for an event:
+    refuse <event_id> <participant_name>
+
+Call the participants for the next raid:
+    call
+
+Get a summary of the participants for the next raid:
+    summary
+
+Create a new role for player:
+    rdefine <role_name> <role_category> <role_icon>
+
+Set a role to user profile:
+    set <role_name>
 \`\`\``
 ));
 
