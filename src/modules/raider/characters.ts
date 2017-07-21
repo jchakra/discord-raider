@@ -11,7 +11,8 @@ export function setCharacter(id: string, name: string, role: string): Promise<Ch
     const characterData = { id, name, role };
     const existing = DB.get('characters', { id });
     if (existing) {
-      reject(false);
+      DB.update('characters', { id }, { role });
+      resolve(characterData);
       return;
     }
     DB.push('characters', characterData);

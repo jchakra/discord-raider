@@ -1,8 +1,16 @@
+import { flatten } from 'lodash';
 import { Module } from '../module';
 import DB from '../../db';
+
 import { parseMessage } from '../../utils/message-utils';
-import { formatRaidToDisplay, generateHelp, formatCallPlayers, formatSummaryPlayers } from './raids-utils';
-import { flatten } from 'lodash';
+
+import {
+  formatRaidToDisplay,
+  generateHelp,
+  formatCallPlayers,
+  formatSummaryPlayers,
+  formatRoleList,
+} from './raids-utils';
 
 import {
   createRaid,
@@ -82,10 +90,14 @@ export const Raider: Module = {
 
       case 'set':
         return setCharacter(message.author.id, message.author.username, messageContent.args[0]).then( character => (
-          { content: `${character.name} registered as a raider!`, recipient: message.channel }
+          { content: `${character.name} registered as a raider (${character.role})!`, recipient: message.channel }
         ))
         .catch( _ => (
           { content: `Already registered!`, recipient: message.channel }
+        ));
+      case 'rlist':
+        return getAllRoles().then(roles => (
+          { content: formatRoleList(roles), recipient: message.channel }
         ));
       case 'help':
         return generateHelp().then( helpString => ({ content: helpString, recipient: message.channel }));

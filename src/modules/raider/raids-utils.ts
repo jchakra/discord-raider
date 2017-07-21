@@ -55,7 +55,14 @@ export const formatCallPlayers = (players: Array<string>): string => (
 
 export const formatSummaryPlayers = (players: Array<Character>, roles: Array<Role>): string => (
   'Members for the next raid: \n' +
-  players.map(p => {
-    return `${roles.find(e => e.name.toLowerCase() === p.role.toLowerCase()).icon} ${p.name} - ${roles.find(e => e.name.toLowerCase() === p.role.toLowerCase()).category}`;
-  }).join('\n')
+  players.map(p =>
+    `${roles.find(e => e.name.toLowerCase() === p.role.toLowerCase()).icon} ${p.name} - ${roles.find(e => e.name.toLowerCase() === p.role.toLowerCase()).category}`
+  ).join('\n')
+);
+
+export const formatRoleList = (roles) => (
+  'Roles availables:\n' +
+  roles.map(r =>
+    `${r.icon} ${r.name} (${r.category})`
+  ).join('\n')
 );
