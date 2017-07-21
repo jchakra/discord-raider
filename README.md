@@ -91,7 +91,7 @@ Commands
 
 ### Character definition
 ```docker
-# Set a role to the discord user
+# Set (or update) a role to the discord user
 !raider set <role_name>
 ```
 
@@ -110,7 +110,10 @@ Commands
 ```
 
 ### Role list
-TBD
+```docker
+!raider rlist  
+```
+
 
 
 Run the tests
