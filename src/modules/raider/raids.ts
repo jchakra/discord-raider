@@ -48,10 +48,12 @@ export function deleteRaid(raidId: string, callerId: string): Promise<boolean> {
 
     if (!raid) {
       reject(false);
+      return;
     }
 
     if (raid.organizerId !== callerId) {
       reject(false);
+      return;
     }
 
     DB.remove('raids', {id: raidId});
@@ -78,18 +80,20 @@ export function getRaids(options: string[]): Promise<Array<Raid>> {
   return new Promise(resolve => resolve(raids));
 }
 
-export function joinRaid(raidId: string, playerId: string, playerName: string, playerTag: string): Promise<boolean> {
+export function joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const raid = DB.get('raids', {id: raidId});
 
     if (!raid) {
       reject(false);
+      return;
     }
 
     const isAlreadyRegistered = find(flatten([raid.players, raid.waitings]), e => e.id === playerId);
     if (!isAlreadyRegistered) {
-      DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName, tag: playerTag }).write();
+      DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName }).write();
       resolve(true);
+      return;
     }
     resolve(false);
   });
@@ -101,12 +105,14 @@ export function declineRaid(raidId: string, playerId: string, playerName: string
 
     if (!raid) {
       reject(false);
+      return;
     }
 
     const isAlreadyRegistered = find(flatten([raid.absents]), e => e.id === playerId);
     if (!isAlreadyRegistered) {
       DB.getRaw('raids', {id: raidId}).get('absents').push({ id: playerId, name: playerName }).write();
       resolve(true);
+      return;
     }
     resolve(false);
   });
@@ -117,10 +123,12 @@ export function accept(raidId: string, playerName: string, callerId: string): Pr
     const raid = DB.get('raids', {id: raidId});
     if (!raid) {
       reject(false);
+      return;
     }
 
     if (raid.organizerId !== callerId) {
       reject(false);
+      return;
     }
     const character = DB.getRaw('raids', {id: raidId})
       .get('waitings')
@@ -129,6 +137,7 @@ export function accept(raidId: string, playerName: string, callerId: string): Pr
 
     if (!character) {
       reject(false);
+      return;
     }
 
     DB.getRaw('raids', {id: raidId})
@@ -149,10 +158,12 @@ export function refuse(raidId: string, playerName: string, callerId: string): Pr
     const raid = DB.get('raids', {id: raidId});
     if (!raid) {
       reject(false);
+      return;
     }
 
     if (raid.organizerId !== callerId) {
       reject(false);
+      return;
     }
     let character = DB.getRaw('raids', {id: raidId})
       .get('waitings')
@@ -178,6 +189,7 @@ export function refuse(raidId: string, playerName: string, callerId: string): Pr
 
       if (!character) {
         reject(false);
+        return;
       }
     }
 
@@ -194,5 +206,18 @@ export function call(): Promise<Array<string>> {
   return new Promise( (resolve, reject) => {
     const players = _getFutureRaids()[0].players.map(p => p.id);
     resolve(players);
+  });
+}
+
+export function summary(): Promise<Array<Character>> {
+  return new Promise( (resolve, reject) => {
+    const nextRaid = _getFutureRaids()[0];
+    if (!nextRaid) {
+      reject(false);
+      return;
+    }
+    const playersId = nextRaid.players.map(p => p.id);
+    const characters = DB.getAll('characters', c => playersId.includes(c.id));
+    resolve(characters);
   });
 }

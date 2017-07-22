@@ -1,6 +1,8 @@
 import * as moment from 'moment';
 
 import { Raid } from './raids';
+import { Character } from './characters';
+import { Role } from './roles';
 
 export const formatRaidToDisplay = (raid: Raid): Array<string> => (
 [
@@ -44,9 +46,37 @@ Decline an event:
 Accept a participant for an event:
     accept <event_id> <participant_name>
 
+Refuse a participant for an event:
+    refuse <event_id> <participant_name>
+
+Call the participants for the next raid:
+    call
+
+Get a summary of the participants for the next raid:
+    summary
+
+Create a new role for player:
+    rdefine <role_name> <role_category> <role_icon>
+
+Set a role to user profile:
+    set <role_name>
 \`\`\``
 ));
 
 export const formatCallPlayers = (players: Array<string>): string => (
   players.map(p => `<@${p}>`).join(', ') + '! You are expected for the next raid!'
+);
+
+export const formatSummaryPlayers = (players: Array<Character>, roles: Array<Role>): string => (
+  'Members for the next raid: \n' +
+  players.map(p =>
+    `${roles.find(e => e.name.toLowerCase() === p.role.toLowerCase()).icon} ${p.name} - ${roles.find(e => e.name.toLowerCase() === p.role.toLowerCase()).category}`
+  ).join('\n')
+);
+
+export const formatRoleList = (roles) => (
+  'Roles availables:\n' +
+  roles.map(r =>
+    `${r.icon} ${r.name} (${r.category})`
+  ).join('\n')
 );
