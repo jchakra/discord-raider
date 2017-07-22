@@ -44,15 +44,15 @@ export function createRaid(name: string, date: string, description: string, orga
 
 export function deleteRaid(raidId: string, callerId: string): Promise<boolean> {
   return new Promise( (resolve, reject) => {
-    const raid = DB.get('raids', {id: raidId});
+    const raid: Raid = DB.get('raids', {id: raidId});
 
     if (!raid) {
-      reject(false);
+      reject({ reason: `The raid id ${raidId} is incorrect` });
       return;
     }
 
     if (raid.organizerId !== callerId) {
-      reject(false);
+      reject({ reason: `Only the organizer (${raid.organizer}) can do this action.` });
       return;
     }
 
@@ -85,7 +85,7 @@ export function joinRaid(raidId: string, playerId: string, playerName: string): 
     const raid = DB.get('raids', {id: raidId});
 
     if (!raid) {
-      reject(false);
+      reject({ reason: `The raid id ${raidId} is incorrect` });
       return;
     }
 
@@ -95,7 +95,7 @@ export function joinRaid(raidId: string, playerId: string, playerName: string): 
       resolve(true);
       return;
     }
-    resolve(false);
+    reject({ reason: `You are already registered for this raid` });
   });
 }
 
@@ -104,7 +104,7 @@ export function declineRaid(raidId: string, playerId: string, playerName: string
     const raid = DB.get('raids', {id: raidId});
 
     if (!raid) {
-      reject(false);
+      reject({ reason: `The raid id ${raidId} is incorrect` });
       return;
     }
 
@@ -114,7 +114,7 @@ export function declineRaid(raidId: string, playerId: string, playerName: string
       resolve(true);
       return;
     }
-    resolve(false);
+    reject({ reason: `You are already registered as absent.` });
   });
 }
 
@@ -122,12 +122,12 @@ export function accept(raidId: string, playerName: string, callerId: string): Pr
   return new Promise((resolve, reject) => {
     const raid = DB.get('raids', {id: raidId});
     if (!raid) {
-      reject(false);
+      reject({ reason: `The raid id ${raidId} is incorrect` });
       return;
     }
 
     if (raid.organizerId !== callerId) {
-      reject(false);
+      reject({ reason: `Only the organizer (${raid.organizer}) can do this action.` });
       return;
     }
     const character = DB.getRaw('raids', {id: raidId})
@@ -136,7 +136,7 @@ export function accept(raidId: string, playerName: string, callerId: string): Pr
       .value();
 
     if (!character) {
-      reject(false);
+      reject({ reason: `There is no player named ${playerName} registered on this raid.` });
       return;
     }
 
@@ -157,12 +157,12 @@ export function refuse(raidId: string, playerName: string, callerId: string): Pr
   return new Promise((resolve, reject) => {
     const raid = DB.get('raids', {id: raidId});
     if (!raid) {
-      reject(false);
+      reject({ reason: `The raid id ${raidId} is incorrect` });
       return;
     }
 
     if (raid.organizerId !== callerId) {
-      reject(false);
+      reject({ reason: `Only the organizer (${raid.organizer}) can do this action.` });
       return;
     }
     let character = DB.getRaw('raids', {id: raidId})
@@ -188,7 +188,7 @@ export function refuse(raidId: string, playerName: string, callerId: string): Pr
         .write();
 
       if (!character) {
-        reject(false);
+        reject({ reason: `There is no player named ${playerName} registered on this raid.` });
         return;
       }
     }
@@ -213,7 +213,7 @@ export function summary(): Promise<Array<Character>> {
   return new Promise( (resolve, reject) => {
     const nextRaid = _getFutureRaids()[0];
     if (!nextRaid) {
-      reject(false);
+      reject({ reason: `There is no scheduled raid in the next two weeks.` });
       return;
     }
     const playersId = nextRaid.players.map(p => p.id);
