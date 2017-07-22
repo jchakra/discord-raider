@@ -211,7 +211,12 @@ export function call(): Promise<Array<string>> {
 
 export function summary(): Promise<Array<Character>> {
   return new Promise( (resolve, reject) => {
-    const playersId = _getFutureRaids()[0].players.map(p => p.id);
+    const nextRaid = _getFutureRaids()[0];
+    if (!nextRaid) {
+      reject(false);
+      return;
+    }
+    const playersId = nextRaid.players.map(p => p.id);
     const characters = DB.getAll('characters', c => playersId.includes(c.id));
     resolve(characters);
   });
