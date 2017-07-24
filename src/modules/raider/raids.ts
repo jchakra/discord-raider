@@ -80,41 +80,102 @@ export function getRaids(options: string[]): Promise<Array<Raid>> {
   return new Promise(resolve => resolve(raids));
 }
 
-export function joinRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
+export function joinRaid(raidId: string, playerId: string, playerName: string, ...options: Array<string>): Promise<string> {
   return new Promise((resolve, reject) => {
-    const raid = DB.get('raids', {id: raidId});
 
-    if (!raid) {
-      reject({ reason: `The raid id ${raidId} is incorrect` });
+    let raids = null;
+    if (raidId === '--next') {
+      raids = (options[0]) ? _getFutureRaids().slice(0, parseInt(options[0])) : [_getFutureRaids()[0]];
+    }
+    else {
+      const raid = DB.get('raids', {id: raidId});
+      raids = (raid) ? [raid] : null;
+    }
+
+    if (!raids || raids.length === 0) {
+      reject({ reason: (raidId === '--next') ? `There is no raid in the next two weeks!` : `The raid id ${raidId} is incorrect` });
       return;
     }
 
-    const isAlreadyRegistered = find(flatten([raid.players, raid.waitings]), e => e.id === playerId);
-    if (!isAlreadyRegistered) {
-      DB.getRaw('raids', {id: raidId}).get('waitings').push({ id: playerId, name: playerName }).write();
-      resolve(true);
-      return;
-    }
-    reject({ reason: `You are already registered for this raid` });
+    // Do something with results?
+    const results = raids.map(r => {
+
+      // Remove user from absents if necessary
+      const isInAbsents = find(r.absents, e => e.id === playerId);
+      if (isInAbsents) {
+        DB.getRaw('raids', {id: r.id})
+          .get('absents')
+          .remove(e => e.id === playerId)
+          .write();
+      }
+
+      const isAlreadyRegistered = find(flatten([r.players, r.waitings]), e => e.id === playerId);
+      if (!isAlreadyRegistered) {
+        DB.getRaw('raids', {id: r.id}).get('waitings').push({ id: playerId, name: playerName }).write();
+        return true;
+      }
+      return false;
+    });
+
+    const message = (options[0]) ?
+      `Registered for the next ${options[0]} raids.` :
+      `Registered for the next raid.`;
+
+    resolve(message);
   });
 }
 
-export function declineRaid(raidId: string, playerId: string, playerName: string): Promise<boolean> {
+export function declineRaid(raidId: string, playerId: string, playerName: string, ...options: Array<string>): Promise<string> {
   return new Promise((resolve, reject) => {
-    const raid = DB.get('raids', {id: raidId});
 
-    if (!raid) {
-      reject({ reason: `The raid id ${raidId} is incorrect` });
+
+    let raids = null;
+    if (raidId === '--next') {
+      raids = (options[0]) ? _getFutureRaids().slice(0, parseInt(options[0])) : [_getFutureRaids()[0]];
+    }
+    else {
+      const raid = DB.get('raids', {id: raidId});
+      raids = (raid) ? [raid] : null;
+    }
+
+    if (!raids || raids.length === 0) {
+      reject({ reason: (raidId === '--next') ? `There is no raid in the next two weeks!` : `The raid id ${raidId} is incorrect` });
       return;
     }
 
-    const isAlreadyRegistered = find(flatten([raid.absents]), e => e.id === playerId);
-    if (!isAlreadyRegistered) {
-      DB.getRaw('raids', {id: raidId}).get('absents').push({ id: playerId, name: playerName }).write();
-      resolve(true);
-      return;
-    }
-    reject({ reason: `You are already registered as absent.` });
+    // Do something with results?
+    const results = raids.map(r => {
+
+      // Remove user from waiting or participants if necessary
+      const isInWaitings = find(r.waitings, e => e.id === playerId);
+      if (isInWaitings) {
+        DB.getRaw('raids', {id: r.id})
+          .get('waitings')
+          .remove(e => e.id === playerId)
+          .write();
+      }
+
+      const isInParticipants = find(r.players, e => e.id === playerId);
+      if (isInParticipants) {
+        DB.getRaw('raids', {id: r.id})
+          .get('players')
+          .remove(e => e.id === playerId)
+          .write();
+      }
+
+      const isAlreadyRegistered = find(flatten([r.absents]), e => e.id === playerId);
+      if (!isAlreadyRegistered) {
+        DB.getRaw('raids', {id: r.id}).get('absents').push({ id: playerId, name: playerName }).write();
+        return true;
+      }
+      return false;
+    });
+
+    const message = (options[0]) ?
+      `Set as absent for the next ${options[0]} raids.` :
+      `Set as absent for the next raid.`;
+
+    resolve(message);
   });
 }
 

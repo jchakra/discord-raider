@@ -72,16 +72,16 @@ export const Raider: Module = {
 
       // Raid participation
       case 'join':
-        return joinRaid(messageContent.args[0], message.author.id, message.author.username)
-          .then(result => (
-            { content: (result) ? 'Your participation is registered!' : 'You are already registered on this raid!', recipient: message.channel }
+        return joinRaid(messageContent.args[0], message.author.id, message.author.username, ...messageContent.args.slice(1))
+          .then(response => (
+            { content: response, recipient: message.channel }
           ))
           .catch(error => ({ content: error.reason || error.message, recipient: message.channel }));
 
       case 'decline':
-        return declineRaid(messageContent.args[0], message.author.id, message.author.username)
-          .then(result => (
-            { content: (result) ? 'Your status is registered!' : 'You are already registered on this raid!', recipient: message.channel }
+        return declineRaid(messageContent.args[0], message.author.id, message.author.username, ...messageContent.args.slice(1))
+          .then(response => (
+            { content: response, recipient: message.channel }
           ))
           .catch(error => ({ content: error.reason || error.message, recipient: message.channel }));
 
